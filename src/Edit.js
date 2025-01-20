@@ -1,12 +1,44 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom';
+import { set,ref } from 'firebase/database';
+import {database} from './firebase';
+import { useNavigate } from 'react-router-dom';
 
 const Edit = () => {
+  
+  const params=new URLSearchParams(useLocation().search);
+  let navigate=useNavigate();
+
   const [data,setData]=useState({
     firstname:'',
     lastname:'',
     email:''
   });
   const {firstname,lastname,email}={...data}
+
+  useEffect(()=>{
+    setData({
+      firstname:params.get('firstname'),
+      lastname:params.get('lastname'),
+      email:params.get('email')
+    })
+  },[])
+
+  const submitHandler=e=>{
+    e.preventDefault();
+    const usersRef=ref(database,`users/${params.get('key')}`);
+    set(usersRef,data).then(
+      alert('successfully updated')
+      
+
+    ).then(()=>navigate(`/`)).catch(((error)=>{
+      alert(error);
+    }
+    ))
+    
+
+    
+  }
 
   const changeHandler=e=>{
     setData({...data,[e.target.name]:e.target.value})
@@ -15,7 +47,7 @@ const Edit = () => {
     <div>
       <center>
         <h3>Update Form</h3>
-        <form 
+        <form onSubmit={submitHandler}
         style={{
           backgroundColor:'goldenrod',
           border:'2px solid black',width:'500px',
@@ -93,7 +125,7 @@ const Edit = () => {
             alignSelf:'start'
 
           }}>
-            <input type="submit" className="btn btn-primary" value="Update" />
+            <input className='btn btn-success' type="submit"  value="Save" />
           </div>
         </form>
       </center>

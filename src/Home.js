@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
+import { useNavigate } from 'react-router-dom';
 import { database } from './firebase'; // Import the database instance
 import { ref, push, onValue, remove,child } from 'firebase/database'; // Import required database functions
 
 const Home = () => {
+  let navigate=useNavigate();
   const [data, setData] = useState({
     firstname: "",
     lastname: "",
@@ -37,8 +39,9 @@ const Home = () => {
     // Push data to the "users" node
     push(usersRef, data)
       .then(() => {
-        console.log("Data submitted successfully!");
-        setData({ firstname: "", lastname: "", email: "" }); // Reset form fields
+        
+        setData({ firstname: "", lastname: "", email: "" });
+        alert("successfully registerd") // Reset form fields
       })
       .catch((error) => {
         console.error("Error submitting data:", error);
@@ -153,18 +156,18 @@ const Home = () => {
             <p><strong>Last Name:</strong> {user.lastname}</p>
             <p><strong>Email:</strong> {user.email}</p>
             <div>
-              <button 
+              <button className='btn btn-success'
               style={{
                 font:'20px bold black',
                 width:'80px',
                 height:'40px',
-                background:'lightgreen',
+                background:'green',
                 border:'1px solid balck',
                 borderRadius:'3px',
                 margin:'20px',
                 marginLeft:'5px'
-              }} >Update</button>
-              <button
+              }} onClick={()=>navigate(`/edit?firstname=${user.firstname}&lastname=${user.lastname}&email=${user.email}&key=${key}`)}>Update</button>
+              <button className='btn btn-danger'
               style={{
                 font:'20px bold black',
                 width:'80px',
@@ -188,7 +191,7 @@ const Home = () => {
           </div>
         ))
       ) : (
-        <p>No users found.</p>
+        <p></p>
       )}
     </div>
   );
